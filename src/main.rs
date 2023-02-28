@@ -1,21 +1,20 @@
-use anyhow::Context;
-use anyhow::{anyhow, Result};
+
+use anyhow::{Result};
 use clap::Parser;
 use fuse_mt::FuseMT;
-use futures_util::{future, SinkExt, StreamExt, TryStreamExt};
-use include_dir::{include_dir, Dir};
-use log::debug;
-use log::{info, warn};
-use serde::{Deserialize, Serialize};
+use futures_util::{StreamExt};
+
+
+use log::{info};
+
 use std::ffi::OsStr;
-use std::path::{Path, PathBuf};
-use std::{env, io::Write, time::SystemTime};
-use tokio::net::ToSocketAddrs;
+use std::path::{PathBuf};
+
+
 use tokio::{
-    join,
-    net::{TcpListener, TcpStream},
+    net::{TcpListener},
 };
-use tokio_tungstenite::tungstenite::Message;
+
 
 use crate::fs::CCFS;
 
@@ -40,7 +39,7 @@ async fn main() -> Result<()> {
     let listener = TcpListener::bind(&args.listen_address).await?;
     info!("Listening on: {}", args.listen_address);
 
-    let bg_fuse = fuse_mt::spawn_mount(
+    let _bg_fuse = fuse_mt::spawn_mount(
         FuseMT::new(CCFS::new(), 1),
         args.mountpoint,
         &(["auto_unmount", "allow_other"].map(OsStr::new))[..],
